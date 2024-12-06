@@ -1,4 +1,4 @@
-import { fetchGlobalEmissionsData } from "@/services/api/climateTraceApi";
+import { fetchGlobalEmissionsData } from "@/services/api/climateTraceApiGlobal";
 import { useEffect } from "react";
 
 const GlobalEmissions = ({ onEmissionsUpdate }) => {

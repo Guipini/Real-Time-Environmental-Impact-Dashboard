@@ -23,7 +23,7 @@ The Real-Time Environmental Impact Dashboard is a web application designed to in
 3. **Comparative Analysis Tool**
    - **Description:** Allows users to compare the carbon emissions of different activities or between different countries.
    - **Functionality:** Processes and displays comparative data side by side.
-   - **User Interaction:** Users select items to compare from dropdown menus.
+   - **User Interaction:* * Users select items to compare from dropdown menus.
 
 4. **Personal Emissions Tracker**
    - **Description:** Users can log their daily activities to track personal carbon emissions over time.

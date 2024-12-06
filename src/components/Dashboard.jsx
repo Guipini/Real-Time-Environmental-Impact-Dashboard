@@ -10,7 +10,8 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useApiCall } from "@/services/api/useApiCall";
 import { carbonApi } from "@/services/api/carbonApi";
-import GlobalEmissions from "./globalEmission";
+import GlobalEmissions from "./GlobalEmission";
+import Navigation from "./Navigation";
 
 const Dashboard = () => {
   const {
@@ -42,13 +43,22 @@ const Dashboard = () => {
         break;
 
       case "flight":
-        // We'll add flight calculations when implementing the full calculator page
-        alert("Please use the Calculator page for flight emissions");
+        // Default calculation for a typical flight of 100km
+        await calculateEmissions({
+          distance_value: 100,
+          distance_unit: "km",
+        });
+
+        alert("Please use the Calculator page for full flight emissions");
         break;
 
       case "electricity":
-        // We'll add electricity calculations when implementing the full calculator page
-        alert("Please use the Calculator page for energy emissions");
+        // Default calculation for a typical home energy usage of 1000kWh
+        await calculateEmissions({
+          distance_value: 1000,
+          distance_unit: "kWh",
+        });
+        alert("Please use the Calculator page for full energy emissions");
         break;
 
       default:
@@ -66,26 +76,7 @@ const Dashboard = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       <GlobalEmissions onEmissionsUpdate={handleEmissionsUpdate} />
-      {/* Navigation */}
-      <nav className="bg-white shadow-sm p-4">
-        <div className="flex items-center justify-between max-w-7xl mx-auto">
-          <h1 className="text-xl font-bold text-green-600">
-            Eco Impact Dashboard
-          </h1>
-          <div className="flex gap-4">
-            <button className="px-4 py-2 rounded hover:bg-gray-100">
-              Calculator
-            </button>
-            <button className="px-4 py-2 rounded hover:bg-gray-100">
-              Tracker
-            </button>
-            <button className="px-4 py-2 rounded hover:bg-gray-100">
-              Resources
-            </button>
-          </div>
-        </div>
-      </nav>
-
+      <Navigation />
       {/* Main Content */}
       <main className="max-w-7xl mx-auto p-4">
         {/* Global Stats */}
