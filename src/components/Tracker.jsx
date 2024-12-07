@@ -5,7 +5,7 @@ import {
   TrendingDown,
   TrendingUp,
 } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
 import { useNavigate } from "react-router-dom";
 import { useEmissions } from "./Navigation";
 import Navigation from "./Navigation";

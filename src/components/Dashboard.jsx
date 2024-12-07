@@ -16,7 +16,7 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
 import { useApiCall } from "@/services/api/useApiCall";
 import { carbonApi } from "@/services/api/carbonApi";
 import GlobalEmissions from "./GlobalEmission";

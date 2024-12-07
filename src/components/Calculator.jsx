@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useApiCall } from "@/services/api/useApiCall";
 import { carbonApi } from "@/services/api/carbonApi";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/Card";
 import Navigation from "./Navigation";
 import { VehicleForm } from "./calculator/VehicleForm";
 import { FlightForm } from "./calculator/FlightForm";
