@@ -1,57 +1,42 @@
 import { useState } from "react";
 
 export const VehicleForm = ({ onSubmit }) => {
-  const [formData, setFormData] = useState({
-    distance_value: "",
-    vehicle_model_id: "c4c45dd6-e85d-4ef1-bb57-47441c4c0437",
-    distance_unit: "km",
-  });
-
   const handleSubmit = (e) => {
     e.preventDefault();
+    const formData = {
+      distance: e.target.distance.value,
+      unit: e.target.unit.value,
+      vehicle_model_id: "7268a9b7-17e8-4c8d-acca-57059252afe9",
+    };
     onSubmit(formData);
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
-      <div>
-        <label className="block text-sm mb-2">Amount/Distance</label>
-        <input
-          type="number"
-          value={formData.distance_value}
-          onChange={(e) =>
-            setFormData({
-              ...formData,
-              distance_value: e.target.value,
-            })
-          }
-          className="w-full p-3 bg-gray-50 border border-gray-200 rounded-md"
-          placeholder="Enter value"
-          required
-        />
-      </div>
-      <div>
-        <label className="block text-sm mb-2">Unit</label>
-        <select
-          value={formData.distance_unit}
-          onChange={(e) =>
-            setFormData({
-              ...formData,
-              distance_unit: e.target.value,
-            })
-          }
-          className="w-full p-3 bg-gray-50 border border-gray-200 rounded-md"
+    <form onSubmit={handleSubmit}>
+      <div className="space-y-4">
+        <div>
+          <label className="block text-sm font-medium mb-1">Distance</label>
+          <input
+            type="number"
+            name="distance"
+            required
+            className="w-full p-2 border rounded"
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-medium mb-1">Unit</label>
+          <select name="unit" className="w-full p-2 border rounded">
+            <option value="km">Kilometers</option>
+            <option value="mi">Miles</option>
+          </select>
+        </div>
+        <button
+          type="submit"
+          className="w-full bg-green-600 text-white p-2 rounded hover:bg-green-700"
         >
-          <option value="km">Kilometers</option>
-          <option value="mi">Miles</option>
-        </select>
+          Calculate
+        </button>
       </div>
-      <button
-        type="submit"
-        className="w-full p-3 bg-green-600 text-white rounded-md hover:bg-green-700"
-      >
-        Calculate Carbon Footprint
-      </button>
     </form>
   );
 };

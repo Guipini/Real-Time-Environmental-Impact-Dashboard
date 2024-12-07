@@ -7,6 +7,7 @@ import {
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useNavigate } from "react-router-dom";
+import { useEmissions } from "./Navigation";
 import Navigation from "./Navigation";
 
 // Emissions Summary Component
@@ -42,12 +43,26 @@ const EmissionsSummary = ({ totalEmissions, trend, comparisonPeriod }) => {
 
 // Emissions Breakdown Component
 const EmissionsBreakdown = () => {
-  const categories = [
-    { category: "Transportation", amount: 450, percentage: 45 },
-    { category: "Household", amount: 300, percentage: 30 },
-    { category: "Food", amount: 150, percentage: 15 },
-    { category: "Shopping", amount: 100, percentage: 10 },
-  ];
+  const { emissionsHistory } = useEmissions();
+
+  // Calculate totals by category
+  const categoryTotals = emissionsHistory.reduce((acc, emission) => {
+    acc[emission.activity] = (acc[emission.activity] || 0) + emission.amount;
+    return acc;
+  }, {});
+
+  const total = Object.values(categoryTotals).reduce(
+    (sum, amount) => sum + amount,
+    0
+  );
+
+  const categories = Object.entries(categoryTotals).map(
+    ([category, amount]) => ({
+      category,
+      amount,
+      percentage: total ? (amount / total) * 100 : 0,
+    })
+  );
 
   return (
     <Card>
@@ -81,12 +96,7 @@ const EmissionsBreakdown = () => {
 
 // Emissions History Component
 const EmissionsHistory = () => {
-  const emissionsData = [
-    { date: "2024-03-01", amount: 25.5, activity: "Transportation" },
-    { date: "2024-03-02", amount: 15.2, activity: "Household" },
-    { date: "2024-03-03", amount: 30.0, activity: "Transportation" },
-    { date: "2024-03-04", amount: 12.8, activity: "Food" },
-  ];
+  const { emissionsHistory } = useEmissions();
 
   return (
     <Card>
@@ -98,22 +108,30 @@ const EmissionsHistory = () => {
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
-          {emissionsData.map((emission, index) => (
-            <div
-              key={index}
-              className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
-            >
-              <div>
-                <p className="font-medium">{emission.activity}</p>
-                <p className="text-sm text-gray-500">
-                  {new Date(emission.date).toLocaleDateString()}
-                </p>
+          {emissionsHistory.length === 0 ? (
+            <p className="text-gray-500 text-center">
+              No activities recorded yet
+            </p>
+          ) : (
+            emissionsHistory.map((emission, index) => (
+              <div
+                key={index}
+                className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
+              >
+                <div>
+                  <p className="font-medium">{emission.activity}</p>
+                  <p className="text-sm text-gray-500">
+                    {new Date(emission.date).toLocaleDateString()}
+                  </p>
+                </div>
+                <div className="text-right">
+                  <p className="font-semibold">
+                    {emission.amount.toFixed(1)} kg CO2
+                  </p>
+                </div>
               </div>
-              <div className="text-right">
-                <p className="font-semibold">{emission.amount} kg CO2</p>
-              </div>
-            </div>
-          ))}
+            ))
+          )}
         </div>
       </CardContent>
     </Card>
@@ -122,10 +140,48 @@ const EmissionsHistory = () => {
 
 // Main Tracker Component
 const Tracker = () => {
+  const navigate = useNavigate();
+  const { emissionsHistory } = useEmissions();
+
+  // Calculate total emissions for current month
+  const currentDate = new Date();
+  const currentMonth = currentDate.getMonth();
+  const currentYear = currentDate.getFullYear();
+
+  const currentMonthEmissions = emissionsHistory
+    .filter((emission) => {
+      const emissionDate = new Date(emission.date);
+      return (
+        emissionDate.getMonth() === currentMonth &&
+        emissionDate.getFullYear() === currentYear
+      );
+    })
+    .reduce((total, emission) => total + emission.amount, 0);
+
+  // Calculate last month's emissions for trend
+  const lastMonth = currentMonth === 0 ? 11 : currentMonth - 1;
+  const lastMonthYear = currentMonth === 0 ? currentYear - 1 : currentYear;
+
+  const lastMonthEmissions = emissionsHistory
+    .filter((emission) => {
+      const emissionDate = new Date(emission.date);
+      return (
+        emissionDate.getMonth() === lastMonth &&
+        emissionDate.getFullYear() === lastMonthYear
+      );
+    })
+    .reduce((total, emission) => total + emission.amount, 0);
+
+  // Calculate trend percentage
+  const trend =
+    lastMonthEmissions === 0
+      ? 0
+      : ((currentMonthEmissions - lastMonthEmissions) / lastMonthEmissions) *
+        100;
+
   return (
     <div className="min-h-screen bg-gray-50">
       <Navigation />
-      {/* Main Content */}
       <div className="max-w-7xl mx-auto p-4">
         <div className="mb-6">
           <h1 className="text-2xl font-bold">Emissions Tracker</h1>
@@ -136,8 +192,8 @@ const Tracker = () => {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <EmissionsSummary
-            totalEmissions={1000}
-            trend={-15}
+            totalEmissions={currentMonthEmissions.toFixed(1)}
+            trend={trend}
             comparisonPeriod="last month"
           />
           <EmissionsBreakdown />

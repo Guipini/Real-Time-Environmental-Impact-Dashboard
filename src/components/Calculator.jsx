@@ -7,8 +7,10 @@ import { VehicleForm } from "./calculator/VehicleForm";
 import { FlightForm } from "./calculator/FlightForm";
 import { ElectricityForm } from "./calculator/ElectricityForm";
 import { ResultCard } from "./calculator/ResultCard";
+import { useEmissions } from "./Navigation";
 
 const Calculator = () => {
+  const { addEmission } = useEmissions();
   const [activityType, setActivityType] = useState("vehicle");
   const [result, setResult] = useState(null);
 
@@ -30,8 +32,30 @@ const Calculator = () => {
   });
 
   const handleSubmit = async (formData) => {
-    const result = await calculateEmissions(formData);
-    setResult(result);
+    try {
+      // Ensure vehicle-specific data is properly formatted
+      const apiData = {
+        ...formData,
+        vehicle_model_id: "7268a9b7-17e8-4c8d-acca-57059252afe9", // Default vehicle if none selected
+        distance_unit: formData.unit || "km",
+        distance_value: Number(formData.distance) || 0,
+      };
+
+      const result = await calculateEmissions(apiData);
+      setResult(result);
+
+      // Add to emissions history if successful
+      if (result?.data?.attributes?.carbon_kg) {
+        addEmission({
+          activity: activityType,
+          amount: result.data.attributes.carbon_kg,
+          details: formData,
+        });
+      }
+    } catch (error) {
+      console.error("Calculation error:", error);
+      // Handle error appropriately
+    }
   };
 
   const renderForm = () => {
